@@ -1,8 +1,3 @@
-################################################
-# Email Finder desenveloper for @Pentesterjeff #
-# https://github.com/pentesterjeff             #
-################################################
-
 import requests
 import re
 import time
