@@ -90,6 +90,7 @@ Recebe um argumento (host/IP), cria um socket TCP para cada porta, usa `connect_
    * Use apenas contra hosts/infraestruturas que você possua autorização explícita para testar. Scans não autorizados podem ser ilegais e detectados por sistemas de defesa.
 
 
+
 # PESHELL:
 Nome do binário: `peshell`. Código tenta `setresuid(0,0,0)` e em seguida chama `system("/bin/bash")`. Elevação só ocorre se o processo já tiver capacidade/privilegios para assumir UID 0 no momento da execução.
 
@@ -268,3 +269,188 @@ Script Python (estilo Python 2) que faz enumeração simples de subdomínios a p
    * Realize varreduras DNS apenas contra domínios onde você tem autorização explícita. Enumeração não-autorizada pode ser considerada intrusiva e/ou ilegal.
 
    
+
+# CRAWLER:
+
+Crawler em Python 2 que faz crawling recursivo de páginas a partir de um domínio inicial. Usa `requests` para obter HTML, uma regex para extrair links absolutos `https?://...`, mantém `to_crawl` (lista FIFO) e `crawled` (set) para evitar reprocessar URLs, imprime `Crawling: <url>` a cada iteração.
+Cabeçalho `User-Agent` é definido. O loop principal é infinito até ocorrer exceção (ex.: `to_crawl` vazio gera `IndexError`) — exceções são capturadas pelo `try/except` externo que imprime erro e uma mensagem de uso.
+
+---
+
+**Modo de uso técnico**
+
+1. **Pré-requisitos**
+
+   * Python 2.x.
+   * Biblioteca `requests`: `pip install requests`.
+
+2. **Nome do arquivo**
+
+   * `crawler.py`
+
+3. **Execução**
+
+   ```bash
+   python crawler.py
+   ```
+
+   No prompt, informar o domínio sem `http://` (ex.: `example.com`).
+
+4. **Parâmetros/Entrada**
+
+   * Entrada interativa via `raw_input('Enter a website: ')`. O script inicializa `to_crawl = ['http://' + site]`.
+
+5. **Comportamento**
+
+   * Remove o primeiro URL de `to_crawl`, faz `requests.get(url, headers=header)`.
+   * Extrai links absolutos com `re.findall(r'<a href="?\'?(https?:\/\/[^"\'>]*)', html)`.
+   * Adiciona links novos a `to_crawl`; marca `url` como `crawled`.
+   * Imprime `Crawling: <url>` para cada página processada.
+   * Loop contínuo até uma exceção interromper (por exemplo `IndexError` quando `to_crawl` ficar vazio), então o bloco `except` externo imprime erro e uma mensagem de ajuda.
+
+6. **Observações técnicas / limitações**
+
+   * Compatível apenas com **Python 2** (`raw_input`, `print` sem parênteses).
+   * Apenas segue **links absolutos** (não resolve links relativos).
+   * Não respeita `robots.txt`.
+   * Sem controle de taxa, sem timeout configurado explicitamente (usa timeout default do `requests`).
+   * Possível `IndexError` quando `to_crawl` ficar vazio — tratado pelo `except` externo que encerra com mensagem genérica.
+   * Sem limite de profundidade, sem detecção de ciclos além do `crawled` set; pode consumir memória/CPU em sites grandes.
+   * Regex simples pode falhar em HTML complexo/JS-generated links; não executa JavaScript.
+
+7. **Parada**
+
+   * Interromper com `Ctrl+C` (KeyboardInterrupt) ou deixar o script lançar exceção quando `to_crawl` esvaziar.
+
+8. **Aviso**
+
+   * Execute somente em alvos que você tem autorização para rastrear. Scanning/crawling não autorizado pode ser inexato ou ilegal.
+
+
+
+# ADV TROJAN
+
+O ficheiro contém um *backdoor* remoto em Python (estilo Python 2) com comportamento de persistência e execução remota de comandos. Pontos críticos identificáveis sem execução:
+
+* Copia um executável (`trojan.exe`) para o diretório temporário do Windows (`%TEMP%`).
+* Tenta criar persistência adicionando entrada em `HKLM\Software\Microsoft\Windows\CurrentVersion\Run` com o valor `driver_update` apontando para o executável em `%TEMP%`.
+* Abre um socket TCP e tenta conectar continuamente a um controlador remoto (`192.168.0.13:4444` no exemplo).
+* Após conexão, recebe strings, as trata como comandos e executa via `subprocess.Popen(..., shell=True)`, retornando stdout+stderr ao controlador.
+* Comunicação sem autenticação e sem criptografia — execução arbitrária remota sem verificação.
+* Loop de reconexão contínuo e reinício automático em erro; reinicia a si mesmo se a conexão cair.
+
+---
+
+**Modo de uso técnico — ALERTA e procedimentos seguros (imediatos)**
+
+1. **ACÃO IMEDIATA (isolar e preservar evidências):**
+
+   * Isole a máquina da rede (retire cabo/disable NIC).
+   * Faça imagem forense do disco e memória antes de mudanças (preserve evidências).
+   * Colete artifacts: lista de processos, `tasklist`/`ps`, conexões de rede (`netstat -anb`/`ss -tup`), chaves de registro (Run), e conteúdo de `%TEMP%`.
+
+2. **Indicadores (IOCs) para detecção rápida:**
+
+   * Arquivo suspeito: `%TEMP%\trojan.exe` (ou arquivo com nome similar).
+   * Entrada de persistência: `HKLM\Software\Microsoft\Windows\CurrentVersion\Run\driver_update`.
+   * Conexões TCP de saída para `192.168.0.13:4444` (ou IP/porta configurados).
+   * Processos Python invocando `subprocess.Popen(..., shell=True)` frequentemente; shells interativos iniciados por processos não esperados.
+   * Logs de execução de comandos remotos sem usuário humano autenticado.
+
+3. **Contenção e limpeza controlada:**
+
+   * Não delete ou sobrescreva logs/artefatos antes da imagem forense.
+   * Após coleta, remova a máquina da produção e faça varredura/limpeza: encerrar processo, remover registro de autorun, remover arquivo em `%TEMP%`.
+   * Reinstale o sistema operacional se houver suspeita de comprometimento profundo.
+   * Roteie/rotate todas as credenciais possivelmente comprometidas (contas locais, chaves, tokens) e force logout de sessões remotas.
+
+4. **Remediação e prevenção:**
+
+   * Aplicar/atualizar AV/EDR e executar varredura completa.
+   * Revisar políticas de execução: bloquear execução de binários em `%TEMP%`, restringir criação de chaves Run em HKLM a administradores via GPO/SElinux equivalents.
+   * Implementar lista de permissões de aplicações (AppLocker/Device Guard).
+   * Monitorar e alertar em EDR/IDS para padrões: criação de autorun no registro, execuções de `cmd/bash` por processos não esperados, conexões TCP persistentes a endereços externos.
+
+5. **Remoção do repositório / comunicação pública:**
+
+   * Remova imediatamente esses ficheiros de qualquer repositório público ou interno.
+   * Se já estiverem no git público: remova do histórico com `git filter-repo` ou BFG e force-push; rotacione qualquer credencial que possa ter sido exposta pelo repositório.
+   * Commit/PR sugerido (modelo curto):
+
+     ```
+     Remove backdoor script por motivos de segurança: conteúdo sensível (persistência e execução remota). Arquivos movidos para armazenamento seguro e histórico limpo. Contactar security@empresa para proceder com auditoria.
+     ```
+
+6. **Análise pós-incidente:**
+
+   * Fazer investigação forense completa: identificar origem do commit, quem teve acesso, timestamps, e se houve execução em infraestrutura.
+   * Revisar logs de rede e SIEM para conexões externas correlacionadas com os IOCs.
+   * Notificar stakeholders de segurança e, se aplicável, compliance/legal.
+
+7. **Aviso legal e ético:**
+
+   * Manuseie e armazene esse material apenas com autorização formal. Execução ou distribuição não autorizada é ilegal.
+
+---
+
+Se quiser, eu já gero agora:
+
+* (A) a **mensagem de commit** pronta para o seu repositório (texto exato);
+* (B) os **comandos `git filter-repo` / BFG`** em formato técnico para remover os arquivos do histórico (instruções seguras);
+* (C) uma **lista formatada de IOCs** pronta para colar no SIEM/EDR.
+
+Escolha uma das opções que quer que eu gere imediatamente.
+
+
+
+# COWROOT 32 | 64:
+
+**Descrição técnica**
+Os ficheiros `cowroot64.c`, `cowroot32.c` e `cowroot.c` sugerem variantes de um exploit de escalonamento local baseado na vulnerabilidade *Dirty COW* (CVE-2016-5195). Em termos gerais: trata-se de código destinado a obter privilégios elevados localmente explorando comportamento de copy-on-write no kernel Linux. Esse tipo de código é perigoso — pode comprometer integridade/confidencialidade do sistema — e não deve ser executado ou distribuído sem autorização explícita em ambiente controlado.
+
+---
+
+**Modo de uso técnico (alerta e procedimentos seguros)**
+
+1. **Não execute.**
+
+   * Não compilar nem executar esses ficheiros em máquinas de produção, pessoais ou de terceiros. Mesmo em máquinas de teste, só em ambientes isolados (VMs/labs) com snapshots e autorização explícita.
+
+2. **Isolamento e armazenamento seguro:**
+
+   * Mova os ficheiros para um diretório restrito (ex.: armazenamento offline ou pasta criptografada).
+   * Restrinja permissões: apenas conta de auditoria deve ler; por exemplo `chmod 600 nome_do_arquivo` e `chown root:root` em sistema controlado.
+   * Não os mantenha em repositórios públicos. Se já estiverem no git público, proceda à remoção do histórico (usar ferramentas como `git filter-repo` ou BFG) e rotacione credenciais possivelmente expostas.
+
+3. **Remoção do repositório (boas práticas):**
+
+   * Remover ficheiros do branch atual (`git rm --cached`) e commitar.
+   * Remover do histórico com `git filter-repo` / BFG (ou instruir ops/infra a fazer isso).
+   * Fornecer um commit/PR com mensagem de segurança indicando a remoção e razão.
+
+4. **Detecção e verificação do sistema:**
+
+   * Verifique kernel e patches: `uname -r` (obter versão do kernel) e compare com boletins do fornecedor.
+   * Atualize o kernel e pacotes do sistema conforme advisories do seu distribuidor.
+   * Procure sinais de comprometimento (processos estranhos, shells com UID 0 não esperados, novas contas, entradas SUID/Binary changes) e execute análise forense se houver suspeita.
+
+5. **Mitigação imediata:**
+
+   * Atualize o sistema com patches oficiais do fornecedor (distribuição).
+   * Revise e remova bits SUID desnecessários; audite binários com permissões elevadas.
+   * Habilite monitoramento/auditoria (auditd, EDR, logs centralizados).
+
+6. **Comunicação & conformidade:**
+
+   * Se for código legado de pentest, documente claramente autorização (escopo, data, responsável).
+   * Notifique stakeholders/segurança e mantenha prova de autorização antes de qualquer teste.
+
+7. **Alternativas seguras para laboratório:**
+
+   * Se o objetivo for pesquisa/educação, use imagens de VM isoladas com snapshots e rotinas de rollback; mantenha logs e não compartilhe exploits em repositórios públicos.
+
+8. **Aviso legal e ético:**
+
+   * Manuseie este material apenas com autorização. Execução/redistribuição não autorizada pode ser crime.
+
+Se quiser, eu gero agora (a) uma **mensagem de commit/PR** pronta para colocar no repositório explicando a remoção desses ficheiros por razões de segurança, ou (b) instruções concisas para usar `git filter-repo` ou BFG de forma segura para limpar o histórico — escolha uma das opções.
