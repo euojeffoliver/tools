@@ -1,4 +1,22 @@
-# SSHCLI:
+┌──(root㉿heffh4ck)-[~/HA4CKTOOLS
+
+└─$ more sshcli.py
+
+    ╔═╗╔═╗╦ ╦╔═╗╦  ╦
+    ╚═╗╚═╗╠═╣║  ║  ║
+    ╚═╝╚═╝╩ ╩╚═╝╩═╝╩
+
+    ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+    ┃                                            ┃
+    ┃  🔐 SSH INTERACTIVE CLIENT                 ┃
+    ┃                                            ┃
+    ┃  Remote command execution over SSH         ┃
+    ┃  with Paramiko library                     ┃
+    ┃                                            ┃
+    ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+---
+    
 Script em Python que estabelece uma sessão SSH interativa com um host remoto utilizando autenticação por senha.
 Ele utiliza a biblioteca **Paramiko** para criar uma conexão segura (`SSHClient()`), define a política `AutoAddPolicy()` para aceitar automaticamente novas chaves de host e executa comandos recebidos via entrada padrão (`raw_input`) em loop contínuo.
 Cada comando é enviado ao host e executado com `exec_command()`, retornando a saída capturada em `stdout` e impressa na tela.
@@ -45,9 +63,27 @@ Cada comando é enviado ao host e executado com `exec_command()`, retornando a s
    * Senhas são passadas como argumento em linha de comando (visíveis em histórico/process list).
    * Compatível apenas com **Python 2** devido ao uso de `raw_input` e `print` sem parênteses.
 
+---
 
+┌──(root㉿heffh4ck)-[~/HA4CKTOOLS
 
-# PORTSCAN:
+└─$ more portscan.py
+
+    ╔═╗╔═╗╦═╗╔╦╗╔═╗╔═╗╔═╗╔╗╔
+    ╠═╝║ ║╠╦╝ ║ ╚═╗║  ╠═╣║║║
+    ╩  ╚═╝╩╚═ ╩ ╚═╝╚═╝╩ ╩╝╚╝
+
+    ╔════════════════════════════════════════════════╗
+    ║                                                ║
+    ║  🎯 TCP PORT SCANNER                           ║
+    ║                                                ║
+    ║  Fast sequential port scanning with            ║
+    ║  socket-based connectivity testing             ║
+    ║                                                ║
+    ╚════════════════════════════════════════════════╝
+
+---
+    
 Script em Python (destinado a Python 2) que realiza um *port scan* sequencial em uma lista fixa de portas.
 Recebe um argumento (host/IP), cria um socket TCP para cada porta, usa `connect_ex()` com timeout de 0.5s para testar conectividade e imprime `"<porta>-> OPEN"` quando a conexão é bem-sucedida (código 0). O loop inclui `time.sleep(1)` entre tentativas; ao final aguarda 2s e imprime `Scan Completed.`.
 
@@ -89,9 +125,27 @@ Recebe um argumento (host/IP), cria um socket TCP para cada porta, usa `connect_
 
    * Use apenas contra hosts/infraestruturas que você possua autorização explícita para testar. Scans não autorizados podem ser ilegais e detectados por sistemas de defesa.
 
+---
 
+┌──(root㉿heffh4ck)-[~/HA4CKTOOLS
 
-# PESHELL:
+└─$ more peshell.c
+
+    ╔═╗╔═╗╔═╗╦ ╦╔═╗╦  ╦  
+    ╠═╝║╣ ╚═╗╠═╣║╣ ║  ║  
+    ╩  ╚═╝╚═╝╩ ╩╚═╝╩═╝╩═╝
+
+    ┌────────────────────────────────────────────────┐
+    │                                                │
+    │  ⚡ LOCAL PRIVILEGE ESCALATION                  │
+    │                                                │
+    │  Binary that attempts UID elevation            │
+    │  via setresuid() syscall                       │
+    │                                                │
+    └────────────────────────────────────────────────┘
+
+---
+
 Nome do binário: `peshell`. Código tenta `setresuid(0,0,0)` e em seguida chama `system("/bin/bash")`. Elevação só ocorre se o processo já tiver capacidade/privilegios para assumir UID 0 no momento da execução.
 
 ---
@@ -128,8 +182,27 @@ sudo ./peshell
 * Teste apenas em VMs/containers isolados e com autorização.
 * Compilar/rodar em máquinas alheias sem permissão é ilegal.
 
+---
 
-# HOST-DISCOVER:
+┌──(root㉿heffh4ck)-[~/HA4CKTOOLS
+
+└─$ more host_discover.sh
+
+    ╦ ╦╔═╗╔═╗╔╦╗  ╔╦╗╦╔═╗╔═╗╔═╗╦  ╦╔═╗╦═╗
+    ╠═╣║ ║╚═╗ ║    ║║║╚═╗║  ║ ║╚╗╔╝║╣ ╠╦╝
+    ╩ ╩╚═╝╚═╝ ╩   ═╩╝╩╚═╝╚═╝╚═╝ ╚╝ ╚═╝╩╚═
+
+    ╔════════════════════════════════════════════════╗
+    ║                                                ║
+    ║  🌐 ICMP NETWORK SWEEPER                       ║
+    ║                                                ║
+    ║  Fast host discovery using parallel            ║
+    ║  ping sweeps across subnet ranges              ║
+    ║                                                ║
+    ╚════════════════════════════════════════════════╝
+
+---
+
 Script `discover.sh` em Bash que itera IPs `10.0.0.1` a `10.0.0.254`, dispara um `ping -c 1` por IP em segundo plano e filtra respostas bem-sucedidas com `grep "bytes from"`.
 Resultado: linhas de ping apenas para hosts que responderam ICMP. Não há sincronização (`wait`) nem controle de número máximo de processos simultâneos.
 
@@ -174,8 +247,27 @@ chmod +x discover.sh
 
 * Execute apenas em redes onde você tem autorização explícita. Scans/ICMP floods em redes alheias podem ser detectados e são potencialmente ilegais.
 
+---
 
-# EMAIL-FIND:
+┌──(root㉿heffh4ck)-[~/HA4CKTOOLS
+
+└─$ more email_find.py
+
+    ╔═╗╔╦╗╔═╗╦╦    ╔═╗╦╔╗╔╔╦╗
+    ║╣ ║║║╠═╣║║    ╠╣ ║║║║ ║║
+    ╚═╝╩ ╩╩ ╩╩╩═╝  ╚  ╩╝╚╝═╩╝
+
+    ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+    ┃                                            ┃
+    ┃  📧 EMAIL HARVESTING TOOL                  ┃
+    ┃                                            ┃
+    ┃  Automated email extraction from websites  ┃
+    ┃  using recursive link crawling             ┃
+    ┃                                            ┃
+    ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+---
+
 Ferramenta em Python que realiza varredura automatizada em um site para localizar endereços de e-mail embutidos em páginas HTML.
 O script rastreia links internos e segue as URLs encontradas, coletando e armazenando todos os e-mails detectados com expressões regulares. Inclui cabeçalho “User-Agent” para simular navegação real e aceita definição do número de tentativas de rastreamento.
 
@@ -200,7 +292,27 @@ OK, how many attempts do you want to make? 10
 
 > Resultado: exibe os e-mails descobertos e o total de tentativas realizadas.
 
-# DNS-BRUTE:
+---
+
+┌──(root㉿heffh4ck)-[~/HA4CKTOOLS
+
+└─$ more dns_brute.py
+
+    ╔╦╗╔╗╔╔═╗  ╔╗ ╦═╗╦ ╦╔╦╗╔═╗
+     ║║║║║╚═╗  ╠╩╗╠╦╝║ ║ ║ ║╣ 
+    ═╩╝╝╚╝╚═╝  ╚═╝╩╚═╚═╝ ╩ ╚═╝
+
+    ╔════════════════════════════════════════════════╗
+    ║                                                ║
+    ║  🔍 DNS SUBDOMAIN ENUMERATOR                   ║
+    ║                                                ║
+    ║  Wordlist-based DNS brute force for            ║
+    ║  discovering hidden subdomains                 ║
+    ║                                                ║
+    ╚════════════════════════════════════════════════╝
+
+---
+
 **Descrição técnica**
 Script Python (estilo Python 2) que faz enumeração simples de subdomínios a partir de uma wordlist usando `dnsbrute` (`dns.resolver`). O script recebe dois argumentos — `<domain>` e `<wordlist>` — concatena cada palavra da lista com o domínio (`sub.domain`) e faz uma consulta DNS do tipo A (`dns.resolver.query`). Se houver resposta, imprime `sub.domain <IP>`. Exceções de resolução são silenciosamente ignoradas. Observações: o arquivo inicia com `#! /bin/bash` (shebang incorreto para Python) e usa APIs/prints compatíveis com Python 2.
 
@@ -268,9 +380,24 @@ Script Python (estilo Python 2) que faz enumeração simples de subdomínios a p
 
    * Realize varreduras DNS apenas contra domínios onde você tem autorização explícita. Enumeração não-autorizada pode ser considerada intrusiva e/ou ilegal.
 
-   
+---
 
-# CRAWLER:
+┌──(root㉿heffh4ck)-[~/HA4CKTOOLS
+
+└─$ more crawler.py
+
+    ╔═╗╦═╗╔═╗╦ ╦╦  ╔═╗╦═╗
+    ║  ╠╦╝╠═╣║║║║  ║╣ ╠╦╝
+    ╚═╝╩╚═╩ ╩╚╩╝╩═╝╚═╝╩╚═
+
+    ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+    ┃                                            ┃
+    ┃  🕷️ RECURSIVE WEB CRAWLER                  ┃
+    ┃                                            ┃
+    ┃  Automated website mapping through         ┃
+    ┃  link extraction and page traversal        ┃
+    ┃                                            ┃
+    ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
 Crawler em Python 2 que faz crawling recursivo de páginas a partir de um domínio inicial. Usa `requests` para obter HTML, uma regex para extrair links absolutos `https?://...`, mantém `to_crawl` (lista FIFO) e `crawled` (set) para evitar reprocessar URLs, imprime `Crawling: <url>` a cada iteração.
 Cabeçalho `User-Agent` é definido. O loop principal é infinito até ocorrer exceção (ex.: `to_crawl` vazio gera `IndexError`) — exceções são capturadas pelo `try/except` externo que imprime erro e uma mensagem de uso.
@@ -326,11 +453,25 @@ Cabeçalho `User-Agent` é definido. O loop principal é infinito até ocorrer e
 
    * Execute somente em alvos que você tem autorização para rastrear. Scanning/crawling não autorizado pode ser inexato ou ilegal.
 
+---
 
+┌──(root㉿heffh4ck)-[~/HA4CKTOOLS
 
-# ADV TROJAN
+└─$ more adv_trojan.py
 
-O ficheiro contém um *backdoor* remoto em Python (estilo Python 2) com comportamento de persistência e execução remota de comandos. Pontos críticos identificáveis sem execução:
+    ╔╦╗╦═╗╔═╗ ╦╔═╗╔╗╔  ⚠️  ⚠️  ⚠️
+     ║ ╠╦╝║ ║ ║╠═╣║║║
+     ╩ ╩╚═╚═╝╚╝╩ ╩╝╚╝
+
+    ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+    ┃                                            ┃
+    ┃         ⚠️ DANGER -> BACKDOOR ⚠️           ┃
+    ┃                                            ┃
+    ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+---
+
+O arquivo contém um *backdoor* remoto em Python (estilo Python 2) com comportamento de persistência e execução remota de comandos. Pontos críticos identificáveis sem execução:
 
 * Copia um executável (`trojan.exe`) para o diretório temporário do Windows (`%TEMP%`).
 * Tenta criar persistência adicionando entrada em `HKLM\Software\Microsoft\Windows\CurrentVersion\Run` com o valor `driver_update` apontando para o executável em `%TEMP%`.
@@ -393,17 +534,21 @@ O ficheiro contém um *backdoor* remoto em Python (estilo Python 2) com comporta
 
 ---
 
-Se quiser, eu já gero agora:
+┌──(root㉿heffh4ck)-[~/HA4CKTOOLS
 
-* (A) a **mensagem de commit** pronta para o seu repositório (texto exato);
-* (B) os **comandos `git filter-repo` / BFG`** em formato técnico para remover os arquivos do histórico (instruções seguras);
-* (C) uma **lista formatada de IOCs** pronta para colar no SIEM/EDR.
+└─$ more cowroot.c
 
-Escolha uma das opções que quer que eu gere imediatamente.
+    ╔═╗╔═╗╦ ╦╦═╗╔═╗╔═╗╔╦╗  ⚠️  ⚠️  ⚠️
+    ║  ║ ║║║║╠╦╝║ ║║ ║ ║ 
+    ╚═╝╚═╝╚╩╝╩╚═╚═╝╚═╝ ╩ 
 
+    ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+    ┃                                            ┃
+    ┃  ⚠️  KERNEL EXPLOIT - CVE-2016-5195  ⚠️    ┃
+    ┃                                            ┃
+    ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
-
-# COWROOT 32 | 64:
+---
 
 **Descrição técnica**
 Os ficheiros `cowroot64.c`, `cowroot32.c` e `cowroot.c` sugerem variantes de um exploit de escalonamento local baseado na vulnerabilidade *Dirty COW* (CVE-2016-5195). Em termos gerais: trata-se de código destinado a obter privilégios elevados localmente explorando comportamento de copy-on-write no kernel Linux. Esse tipo de código é perigoso — pode comprometer integridade/confidencialidade do sistema — e não deve ser executado ou distribuído sem autorização explícita em ambiente controlado.
