@@ -1,4 +1,4 @@
-┌──(root㉿heffh4ck)-[~/HA4CKTOOLS
+┌──(root㉿jeffh4ck)-[~/HA4CKTOOLS
 
 └─$ more sshcli.py
 
@@ -65,7 +65,7 @@ Cada comando é enviado ao host e executado com `exec_command()`, retornando a s
 
 ---
 
-┌──(root㉿heffh4ck)-[~/HA4CKTOOLS
+┌──(root㉿jeffh4ck)-[~/HA4CKTOOLS
 
 └─$ more portscan.py
 
@@ -127,7 +127,7 @@ Recebe um argumento (host/IP), cria um socket TCP para cada porta, usa `connect_
 
 ---
 
-┌──(root㉿heffh4ck)-[~/HA4CKTOOLS
+┌──(root㉿jeffh4ck)-[~/HA4CKTOOLS
 
 └─$ more peshell.c
 
@@ -184,7 +184,7 @@ sudo ./peshell
 
 ---
 
-┌──(root㉿heffh4ck)-[~/HA4CKTOOLS
+┌──(root㉿jeffh4ck)-[~/HA4CKTOOLS
 
 └─$ more host_discover.sh
 
@@ -249,7 +249,7 @@ chmod +x discover.sh
 
 ---
 
-┌──(root㉿heffh4ck)-[~/HA4CKTOOLS
+┌──(root㉿jeffh4ck)-[~/HA4CKTOOLS
 
 └─$ more email_find.py
 
@@ -294,7 +294,7 @@ OK, how many attempts do you want to make? 10
 
 ---
 
-┌──(root㉿heffh4ck)-[~/HA4CKTOOLS
+┌──(root㉿jeffh4ck)-[~/HA4CKTOOLS
 
 └─$ more dns_brute.py
 
@@ -382,7 +382,7 @@ Script Python (estilo Python 2) que faz enumeração simples de subdomínios a p
 
 ---
 
-┌──(root㉿heffh4ck)-[~/HA4CKTOOLS
+┌──(root㉿jeffh4ck)-[~/HA4CKTOOLS
 
 └─$ more crawler.py
 
@@ -455,7 +455,7 @@ Cabeçalho `User-Agent` é definido. O loop principal é infinito até ocorrer e
 
 ---
 
-┌──(root㉿heffh4ck)-[~/HA4CKTOOLS
+┌──(root㉿jeffh4ck)-[~/HA4CKTOOLS
 
 └─$ more adv_trojan.py
 
@@ -534,7 +534,7 @@ O arquivo contém um *backdoor* remoto em Python (estilo Python 2) com comportam
 
 ---
 
-┌──(root㉿heffh4ck)-[~/HA4CKTOOLS
+┌──(root㉿jeffh4ck)-[~/HA4CKTOOLS
 
 └─$ more cowroot.c
 
