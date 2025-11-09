@@ -452,5 +452,4 @@ Os ficheiros `cowroot64.c`, `cowroot32.c` e `cowroot.c` sugerem variantes de um 
 8. **Aviso legal e ético:**
 
    * Manuseie este material apenas com autorização. Execução/redistribuição não autorizada pode ser crime.
-
-Se quiser, eu gero agora (a) uma **mensagem de commit/PR** pronta para colocar no repositório explicando a remoção desses ficheiros por razões de segurança, ou (b) instruções concisas para usar `git filter-repo` ou BFG de forma segura para limpar o histórico — escolha uma das opções.
+   
